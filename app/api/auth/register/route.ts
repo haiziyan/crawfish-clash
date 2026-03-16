@@ -19,11 +19,12 @@ export async function POST(req: NextRequest) {
     const supabase = getSupabase();
 
     // 检查邮箱是否已注册
+    // 注意：.single() 在无匹配行时会返回 PGRST116 错误，这里只关心 data 是否存在
     const { data: existing } = await supabase
       .from('users')
       .select('id')
       .eq('email', email)
-      .single();
+      .maybeSingle();
 
     if (existing) {
       return NextResponse.json({ error: '该邮箱已被注册' }, { status: 400 });
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
         .from('users')
         .select('id, score')
         .eq('invite_code', inviteCode)
-        .single();
+        .maybeSingle();
 
       if (inviter) {
         inviterId = inviter.id;
@@ -67,8 +68,11 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (insertError || !newUser) {
-      console.error(insertError);
-      return NextResponse.json({ error: '注册失败，请重试' }, { status: 500 });
+      console.error('[register] insert error:', insertError);
+      return NextResponse.json(
+        { error: '注册失败，请重试', detail: insertError?.message },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
