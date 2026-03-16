@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +9,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '请填写邮箱和密码' }, { status: 400 });
     }
 
-    // 查询用户
+    const supabase = getSupabase();
+
     const { data: user, error } = await supabase
       .from('users')
       .select('id, nickname, email, password, score, invite_code, title')

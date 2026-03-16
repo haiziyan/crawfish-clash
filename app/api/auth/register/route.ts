@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 function generateInviteCode(nickname: string): string {
   return 'XIAXIA' + nickname.slice(0, 3).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
@@ -15,6 +15,8 @@ export async function POST(req: NextRequest) {
     if (nickname.length < 2 || nickname.length > 16) {
       return NextResponse.json({ error: '昵称长度需在2-16字之间' }, { status: 400 });
     }
+
+    const supabase = getSupabase();
 
     // 检查邮箱是否已注册
     const { data: existing } = await supabase
@@ -42,7 +44,6 @@ export async function POST(req: NextRequest) {
       if (inviter) {
         inviterId = inviter.id;
         bonusScore = 500;
-        // 给邀请人加积分
         await supabase
           .from('users')
           .update({ score: inviter.score + 500 })
