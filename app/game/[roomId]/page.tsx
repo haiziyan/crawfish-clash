@@ -475,7 +475,7 @@ export default function GamePage() {
       </div>
 
       {/* HP Bar */}
-      <div style={{ position: 'fixed', bottom: 100, left: '50%', transform: 'translateX(-50%)', zIndex: 50, width: '280px' }}>
+      <div style={{ position: 'fixed', bottom: 108, left: '50%', transform: 'translateX(-50%)', zIndex: 50, width: 'min(280px, 50vw)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
           <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>❤️ HP</span>
           <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{hud.hp}/100</span>
@@ -485,25 +485,50 @@ export default function GamePage() {
         </div>
       </div>
 
-      {/* Skills */}
-      <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 50, display: 'flex', gap: '12px' }}>
+      {/* Skills — 桌面端居中底部，移动端右下角 */}
+      <div className="skills-bar" style={{ position: 'fixed', bottom: 24, right: 20, zIndex: 50, display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-end' }}>
         {([['Q', '冲刺', 3000, 'q'], ['W', '防御', 4000, 'w'], ['E', '喷水', 5000, 'e']] as [string, string, number, 'q'|'w'|'e'][]).map(([key, name, cd, k]) => {
           const cdLeft = getSkillCd(k, cd);
+          const fireSkill = () => {
+            const s = stateRef.current;
+            const now = Date.now();
+            if (k === 'q' && now - s.skills.q > 3000) {
+              s.skills.q = now;
+              s.player.size = Math.max(s.player.size * 0.95, 20);
+              const dx = Math.cos(s.player.angle) * 80;
+              const dy = Math.sin(s.player.angle) * 80;
+              s.player.x = Math.max(50, Math.min(MAP_W - 50, s.player.x + dx));
+              s.player.y = Math.max(50, Math.min(MAP_H - 50, s.player.y + dy));
+              setSkills({ ...s.skills });
+            } else if (k === 'w' && now - s.skills.w > 4000) {
+              s.skills.w = now; setSkills({ ...s.skills });
+            } else if (k === 'e' && now - s.skills.e > 5000) {
+              s.skills.e = now; setSkills({ ...s.skills });
+            }
+          };
           return (
-            <div key={key} style={{
-              width: '64px', height: '64px', borderRadius: '8px',
-              background: cdLeft > 0 ? 'rgba(0,0,0,0.6)' : 'rgba(192,57,43,0.3)',
-              border: `2px solid ${cdLeft > 0 ? 'var(--dark-border)' : 'var(--red-main)'}`,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              position: 'relative', overflow: 'hidden',
-            }}>
+            <div key={key}
+              onClick={fireSkill}
+              onTouchEnd={(e) => { e.preventDefault(); fireSkill(); }}
+              style={{
+                width: '72px', height: '72px', borderRadius: '12px',
+                background: cdLeft > 0 ? 'rgba(0,0,0,0.6)' : 'rgba(192,57,43,0.3)',
+                border: `2px solid ${cdLeft > 0 ? 'var(--dark-border)' : 'var(--red-main)'}`,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                position: 'relative', overflow: 'hidden',
+                cursor: 'pointer',
+                boxShadow: cdLeft === 0 ? '0 0 16px rgba(192,57,43,0.5)' : 'none',
+                transition: 'box-shadow 0.3s, background 0.3s',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+              }}>
               {cdLeft > 0 && (
-                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
-                  <span style={{ fontSize: '20px', fontWeight: 900, color: 'white', fontFamily: 'monospace' }}>{cdLeft}</span>
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, borderRadius: '10px' }}>
+                  <span style={{ fontSize: '22px', fontWeight: 900, color: 'white', fontFamily: 'monospace' }}>{cdLeft}</span>
                 </div>
               )}
-              <div style={{ fontSize: '18px', fontWeight: 900, color: 'var(--gold)' }}>{key}</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{name}</div>
+              <div style={{ fontSize: '20px', fontWeight: 900, color: 'var(--gold)', lineHeight: 1 }}>{key}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>{name}</div>
             </div>
           );
         })}
