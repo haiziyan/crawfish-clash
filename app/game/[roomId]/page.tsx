@@ -64,10 +64,27 @@ function generateBots(count: number): Player[] {
   });
 }
 
+// 虚拟摇杆状态类型
+interface JoystickState {
+  active: boolean;
+  baseX: number;
+  baseY: number;
+  stickX: number;
+  stickY: number;
+  touchId: number | null;
+}
+
 export default function GamePage() {
   const { roomId } = useParams();
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const joystickRef = useRef<JoystickState>({
+    active: false, baseX: 0, baseY: 0, stickX: 0, stickY: 0, touchId: null,
+  });
+  const [joystickUI, setJoystickUI] = useState<JoystickState>({
+    active: false, baseX: 0, baseY: 0, stickX: 0, stickY: 0, touchId: null,
+  });
+  const isMobile = useRef(false);
   const stateRef = useRef({
     player: {
       id: 'me', name: '我', x: MAP_W / 2, y: MAP_H / 2,
@@ -97,11 +114,78 @@ export default function GamePage() {
     const onResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
     window.addEventListener('resize', onResize);
 
+    // 检测移动端
+    isMobile.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
     const onMouseMove = (e: MouseEvent) => {
       stateRef.current.mouseX = e.clientX;
       stateRef.current.mouseY = e.clientY;
     };
     window.addEventListener('mousemove', onMouseMove);
+
+    // 虚拟摇杆触摸处理（屏幕左半区）
+    const JOYSTICK_RADIUS = 60;
+    const onTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      Array.from(e.changedTouches).forEach(touch => {
+        // 左半屏 → 摇杆
+        if (touch.clientX < window.innerWidth / 2) {
+          if (joystickRef.current.touchId === null) {
+            joystickRef.current = {
+              active: true,
+              baseX: touch.clientX,
+              baseY: touch.clientY,
+              stickX: touch.clientX,
+              stickY: touch.clientY,
+              touchId: touch.identifier,
+            };
+            setJoystickUI({ ...joystickRef.current });
+          }
+        }
+      });
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      Array.from(e.changedTouches).forEach(touch => {
+        const j = joystickRef.current;
+        if (touch.identifier === j.touchId) {
+          const dx = touch.clientX - j.baseX;
+          const dy = touch.clientY - j.baseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const clamped = Math.min(dist, JOYSTICK_RADIUS);
+          const angle = Math.atan2(dy, dx);
+          const sx = j.baseX + Math.cos(angle) * clamped;
+          const sy = j.baseY + Math.sin(angle) * clamped;
+          joystickRef.current.stickX = sx;
+          joystickRef.current.stickY = sy;
+          // 映射为「鼠标」方向（以 canvas 中心为参考）
+          const norm = dist > 8 ? dist : 0;
+          if (norm > 8) {
+            stateRef.current.mouseX = canvas.width / 2 + Math.cos(angle) * 200;
+            stateRef.current.mouseY = canvas.height / 2 + Math.sin(angle) * 200;
+          } else {
+            stateRef.current.mouseX = canvas.width / 2;
+            stateRef.current.mouseY = canvas.height / 2;
+          }
+          setJoystickUI({ ...joystickRef.current });
+        }
+      });
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+      Array.from(e.changedTouches).forEach(touch => {
+        if (touch.identifier === joystickRef.current.touchId) {
+          joystickRef.current = { active: false, baseX: 0, baseY: 0, stickX: 0, stickY: 0, touchId: null };
+          setJoystickUI({ ...joystickRef.current });
+          stateRef.current.mouseX = canvas.width / 2;
+          stateRef.current.mouseY = canvas.height / 2;
+        }
+      });
+    };
+    canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+    canvas.addEventListener('touchend', onTouchEnd, { passive: false });
+    canvas.addEventListener('touchcancel', onTouchEnd, { passive: false });
 
     const onKey = (e: KeyboardEvent) => {
       const s = stateRef.current;
@@ -346,6 +430,10 @@ export default function GamePage() {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('keydown', onKey);
+      canvas.removeEventListener('touchstart', onTouchStart);
+      canvas.removeEventListener('touchmove', onTouchMove);
+      canvas.removeEventListener('touchend', onTouchEnd);
+      canvas.removeEventListener('touchcancel', onTouchEnd);
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
@@ -429,8 +517,8 @@ export default function GamePage() {
         fontFamily: "'Noto Serif SC', serif", cursor: 'pointer', fontSize: '13px',
       }}>退出</button>
 
-      {/* 游戏提示 */}
-      <div style={{ position: 'fixed', top: 80, left: 16, zIndex: 50,
+      {/* 游戏提示（桌面端显示） */}
+      <div className="desktop-tips" style={{ position: 'fixed', top: 80, left: 16, zIndex: 50,
         background: 'rgba(13,10,8,0.7)', border: '1px solid var(--dark-border)',
         borderRadius: '8px', padding: '12px 16px', fontSize: '12px', color: 'var(--text-muted)',
         lineHeight: 2,
@@ -440,6 +528,33 @@ export default function GamePage() {
         <div>W 防御硬壳</div>
         <div>E 喷水攻击</div>
       </div>
+
+      {/* 虚拟摇杆（移动端） */}
+      {joystickUI.active && (
+        <div style={{ position: 'fixed', zIndex: 60, pointerEvents: 'none',
+          left: joystickUI.baseX - 60, top: joystickUI.baseY - 60,
+          width: 120, height: 120,
+        }}>
+          {/* 底座 */}
+          <div style={{
+            position: 'absolute', left: 0, top: 0, width: 120, height: 120,
+            borderRadius: '50%',
+            background: 'rgba(243,156,18,0.12)',
+            border: '2px solid rgba(243,156,18,0.4)',
+          }} />
+          {/* 摇杆 */}
+          <div style={{
+            position: 'absolute',
+            left: joystickUI.stickX - joystickUI.baseX + 60 - 22,
+            top: joystickUI.stickY - joystickUI.baseY + 60 - 22,
+            width: 44, height: 44,
+            borderRadius: '50%',
+            background: 'rgba(231,76,60,0.7)',
+            border: '2px solid var(--red-bright)',
+            boxShadow: '0 0 12px rgba(231,76,60,0.6)',
+          }} />
+        </div>
+      )}
 
       {/* 游戏结束弹窗 */}
       {gameOver && (

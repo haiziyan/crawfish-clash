@@ -221,6 +221,35 @@ body {
   margin: 24px 0;
 }
 
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .desktop-tips {
+    display: none !important;
+  }
+
+  /* 技能按钮移动端放大，方便触摸 */
+  .skill-btn {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  /* HUD 字体缩小适配小屏 */
+  .hud-bar {
+    padding: 8px 16px !important;
+    gap: 14px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* 防止移动端双击缩放 */
+* {
+  touch-action: manipulation;
+}
+
+canvas {
+  touch-action: none;
+}
+
 /* 游戏标签 */
 .game-badge {
   display: inline-block;
