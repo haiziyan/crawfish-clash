@@ -2,11 +2,12 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 
 const PORT = process.env.PORT || 3001;
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
+
 const MAP_W = 2400;
 const MAP_H = 2400;
 const ARENA_R = 1100;
 
-// 游戏状态
 const rooms = {};
 
 function createRoom(roomId) {
@@ -15,7 +16,7 @@ function createRoom(roomId) {
     players: {},
     foods: generateFoods(80),
     startTime: Date.now(),
-    duration: 300000, // 5分钟
+    duration: 300000,
   };
 }
 
@@ -24,7 +25,7 @@ function generateFoods(count) {
     const angle = Math.random() * Math.PI * 2;
     const r = Math.random() * ARENA_R * 0.9;
     return {
-      id: `f${Date.now()}-${i}`,
+      id: `f${Date.now()}-${i}-${Math.random().toString(36).slice(2)}`,
       x: MAP_W / 2 + Math.cos(angle) * r,
       y: MAP_H / 2 + Math.sin(angle) * r,
       type: Math.random() < 0.1 ? 'spicy' : Math.random() < 0.15 ? 'steam' : 'normal',
@@ -33,19 +34,37 @@ function generateFoods(count) {
 }
 
 const httpServer = createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ status: 'ok', message: '小龙虾大战 游戏服务器运行中' }));
+  // 健康检查端点（Render 需要）
+  res.writeHead(200, {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  });
+  res.end(JSON.stringify({
+    status: 'ok',
+    message: '🦞 小龙虾大战游戏服务器运行中',
+    rooms: Object.keys(rooms).length,
+    players: Object.values(rooms).reduce((acc, r) => acc + Object.keys(r.players).length, 0),
+  }));
 });
 
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: [
+      CLIENT_URL,
+      'http://localhost:3000',
+      /\.vercel\.app$/,
+    ],
     methods: ['GET', 'POST'],
+    credentials: true,
   },
+  // Render 免费版需要长轮询降级支持
+  transports: ['websocket', 'polling'],
+  pingTimeout: 60000,
+  pingInterval: 25000,
 });
 
 io.on('connection', (socket) => {
-  console.log(`[连接] ${socket.id}`);
+  console.log(`[连接] ${socket.id} 总连接数: ${io.engine.clientsCount}`);
 
   socket.on('join_room', ({ roomId, nickname, color }) => {
     if (!rooms[roomId]) rooms[roomId] = createRoom(roomId);
@@ -69,14 +88,12 @@ io.on('connection', (socket) => {
     socket.join(roomId);
     socket.data.roomId = roomId;
 
-    // 发送初始状态
     socket.emit('game_state', {
       player: room.players[socket.id],
       players: Object.values(room.players),
       foods: room.foods,
     });
 
-    // 通知房间其他人
     socket.to(roomId).emit('player_joined', room.players[socket.id]);
     console.log(`[加入] ${nickname} 进入房间 ${roomId}，当前 ${Object.keys(room.players).length} 人`);
   });
@@ -86,14 +103,8 @@ io.on('connection', (socket) => {
     if (!roomId || !rooms[roomId]) return;
     const player = rooms[roomId].players[socket.id];
     if (!player) return;
-
-    player.x = x;
-    player.y = y;
-    player.angle = angle;
-    player.size = size;
-    player.hp = hp;
-    player.score = score;
-
+    player.x = x; player.y = y; player.angle = angle;
+    player.size = size; player.hp = hp; player.score = score;
     socket.to(roomId).emit('player_updated', player);
   });
 
@@ -105,7 +116,6 @@ io.on('connection', (socket) => {
     if (idx !== -1) {
       room.foods.splice(idx, 1);
       io.to(roomId).emit('food_eaten', { foodId });
-      // 补充食物
       if (room.foods.length < 40) {
         const newFoods = generateFoods(10);
         room.foods.push(...newFoods);
@@ -134,14 +144,22 @@ io.on('connection', (socket) => {
       io.to(roomId).emit('player_left', { id: socket.id });
       if (Object.keys(rooms[roomId].players).length === 0) {
         delete rooms[roomId];
-        console.log(`[房间] ${roomId} 已清空`);
+        console.log(`[清理] 房间 ${roomId} 已清空`);
       }
     }
     console.log(`[断开] ${socket.id}`);
   });
 });
 
-httpServer.listen(PORT, () => {
-  console.log(`🦞 小龙虾大战游戏服务器运行在 http://localhost:${PORT}`);
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`🦞 小龙虾大战游戏服务器运行在端口 ${PORT}`);
+  console.log(`   允许来源: ${CLIENT_URL}`);
 });
 
+// 防止 Render 免费版休眠：定期自我 ping
+if (process.env.RENDER_EXTERNAL_URL) {
+  setInterval(() => {
+    const https = require('https');
+    https.get(process.env.RENDER_EXTERNAL_URL, () => {}).on('error', () => {});
+  }, 14 * 60 * 1000); // 每14分钟 ping 一次
+}
