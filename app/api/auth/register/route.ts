@@ -87,7 +87,8 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    console.error('[register]', msg);
-    return NextResponse.json({ error: '服务器错误', detail: msg }, { status: 500 });
+    const stack = e instanceof Error ? e.stack : '';
+    console.error('[register] caught exception:', msg, stack);
+    return NextResponse.json({ error: '服务器错误', detail: msg, stack }, { status: 500 });
   }
 }
