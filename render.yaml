@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: crawfish-clash-server
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install
+    startCommand: node server/index.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        sync: false
+
