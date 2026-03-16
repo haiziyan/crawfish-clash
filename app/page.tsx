@@ -49,7 +49,11 @@ function FeatureCard({ icon, title, desc }: { icon: string; title: string; desc:
 }
 
 export default function HomePage() {
-  const [onlineCount] = useState(Math.floor(Math.random() * 500) + 128);
+  const [onlineCount, setOnlineCount] = useState(128);
+
+  useEffect(() => {
+    setOnlineCount(Math.floor(Math.random() * 500) + 128);
+  }, []);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
