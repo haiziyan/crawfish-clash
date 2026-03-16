@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '@/lib/supabase';
 
-// 简单内存存储（生产环境请替换为数据库）
-const users: Record<string, { id: string; nickname: string; email: string; password: string; score: number; inviteCode: string; invitedBy?: string }> = {};
+function generateInviteCode(nickname: string): string {
+  return 'XIAXIA' + nickname.slice(0, 3).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,31 +15,73 @@ export async function POST(req: NextRequest) {
     if (nickname.length < 2 || nickname.length > 16) {
       return NextResponse.json({ error: '昵称长度需在2-16字之间' }, { status: 400 });
     }
-    const existing = Object.values(users).find(u => u.email === email);
+
+    // 检查邮箱是否已注册
+    const { data: existing } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single();
+
     if (existing) {
       return NextResponse.json({ error: '该邮箱已被注册' }, { status: 400 });
     }
 
-    const id = uuidv4();
-    const myInviteCode = 'XIAXIA' + nickname.slice(0, 3).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
+    const myInviteCode = generateInviteCode(nickname);
     let bonusScore = 0;
+    let inviterId: string | null = null;
 
     // 处理邀请码奖励
     if (inviteCode) {
-      const inviter = Object.values(users).find(u => u.inviteCode === inviteCode);
+      const { data: inviter } = await supabase
+        .from('users')
+        .select('id, score')
+        .eq('invite_code', inviteCode)
+        .single();
+
       if (inviter) {
-        inviter.score += 500;
+        inviterId = inviter.id;
         bonusScore = 500;
+        // 给邀请人加积分
+        await supabase
+          .from('users')
+          .update({ score: inviter.score + 500 })
+          .eq('id', inviter.id);
       }
     }
 
-    users[id] = { id, nickname, email, password, score: bonusScore, inviteCode: myInviteCode, invitedBy: inviteCode };
+    // 插入新用户
+    const { data: newUser, error: insertError } = await supabase
+      .from('users')
+      .insert({
+        nickname,
+        email,
+        password,
+        score: bonusScore,
+        invite_code: myInviteCode,
+        invited_by: inviterId,
+        title: '小虾米',
+      })
+      .select('id, nickname, email, score, invite_code, title')
+      .single();
+
+    if (insertError || !newUser) {
+      console.error(insertError);
+      return NextResponse.json({ error: '注册失败，请重试' }, { status: 500 });
+    }
 
     return NextResponse.json({
-      user: { id, nickname, email, score: bonusScore, inviteCode: myInviteCode, title: '小虾米' },
+      user: {
+        id: newUser.id,
+        nickname: newUser.nickname,
+        email: newUser.email,
+        score: newUser.score,
+        inviteCode: newUser.invite_code,
+        title: newUser.title,
+      },
     });
-  } catch {
+  } catch (e) {
+    console.error(e);
     return NextResponse.json({ error: '服务器错误' }, { status: 500 });
   }
 }
-
