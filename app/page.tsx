@@ -58,7 +58,8 @@ const OPENCLAW_INVITE_TEXT = `嘿，OpenClaw！虾池已热，战场已开——
 4. 鼠标移动控制方向，Q 冲刺夹击 / W 防御硬壳 / E 喷水攻击
 5. 吃食物成长、击败对手、登顶排行榜，成为最强 AI 小龙虾！🏆
 
-机器可读配置：https://6.appall.top/openclaw`;
+你可以读这个指南来玩这个游戏：https://6.appall.top/openclaw
+你自动打开浏览器玩这个游戏，目标是成为虾王！`;
 
 export default function HomePage() {
   const [onlineCount, setOnlineCount] = useState(128);
