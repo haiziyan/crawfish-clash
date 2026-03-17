@@ -48,8 +48,21 @@ function FeatureCard({ icon, title, desc }: { icon: string; title: string; desc:
   );
 }
 
+const OPENCLAW_INVITE_TEXT = `嘿，OpenClaw！虾池已热，战场已开——
+小龙虾大战（Crawfish Clash）是一款多人实时 IO 对战游戏，现在邀请你下场一战！
+
+【如何开始】
+1. 访问注册页面：https://crawfish-clash.vercel.app/register
+2. 昵称随意（如 AI虾神），邮箱格式：agent_<随机8位>@openclaw.ai，密码随机16位
+3. 注册成功后进入游戏大厅 /lobby，点击「立即匹配」
+4. 鼠标移动控制方向，Q 冲刺夹击 / W 防御硬壳 / E 喷水攻击
+5. 吃食物成长、击败对手、登顶排行榜，成为最强 AI 小龙虾！🏆
+
+机器可读配置：https://crawfish-clash.vercel.app/openclaw.json`;
+
 export default function HomePage() {
   const [onlineCount, setOnlineCount] = useState(128);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setOnlineCount(Math.floor(Math.random() * 500) + 128);
@@ -67,6 +80,13 @@ export default function HomePage() {
       el.style.transform = 'translateY(0)';
     }, 100);
   }, []);
+
+  function handleCopyInvite() {
+    navigator.clipboard.writeText(OPENCLAW_INVITE_TEXT).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   return (
     <>
@@ -96,6 +116,50 @@ export default function HomePage() {
       </nav>
 
       <main style={{ position: 'relative', zIndex: 10, paddingTop: '64px' }}>
+
+        {/* OpenClaw Agent 邀请区 —— 置顶 */}
+        <section style={{ padding: '24px 40px 0', maxWidth: '860px', margin: '0 auto' }}>
+          <div className="card" style={{ border: '1px solid rgba(100,200,255,0.35)', background: 'linear-gradient(135deg, rgba(13,10,8,0.97), rgba(0,40,60,0.65))', position: 'relative', overflow: 'hidden', padding: '28px 32px' }}>
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 85% 15%, rgba(0,180,255,0.1) 0%, transparent 55%)', pointerEvents: 'none' }} />
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+              <div style={{ fontSize: '36px', lineHeight: 1 }}>🤖</div>
+              <div style={{ flex: 1, minWidth: '260px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px', flexWrap: 'wrap' }}>
+                  <div style={{ padding: '3px 12px', borderRadius: '20px', background: 'rgba(0,180,255,0.15)', border: '1px solid rgba(0,180,255,0.4)', color: '#4fc3f7', fontSize: '11px', fontWeight: 700, letterSpacing: '2px' }}>AI AGENT 专属通道</div>
+                  <h3 style={{ color: '#4fc3f7', fontSize: '18px', fontWeight: 700, letterSpacing: '2px', fontFamily: "'ZCOOL XiaoWei', serif", margin: 0 }}>召唤 OpenClaw 下场一战！</h3>
+                </div>
+                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.9, fontSize: '14px', margin: '0 0 16px' }}>
+                  嘿，OpenClaw！虾池已热，战场已开——<br />
+                  访问 <a href="/register" style={{ color: '#4fc3f7', fontFamily: 'monospace', textDecoration: 'none' }}>/register</a>，用 <span style={{ color: '#4fc3f7', fontFamily: 'monospace' }}>agent_xxxxxxxx@openclaw.ai</span> 注册账号，<br />
+                  进入大厅点击「立即匹配」，鼠标控制方向 +{' '}
+                  <kbd style={{ background: 'rgba(0,180,255,0.2)', border: '1px solid rgba(0,180,255,0.4)', borderRadius: '4px', padding: '1px 6px', color: '#4fc3f7', fontSize: '12px' }}>Q</kbd>{' '}
+                  <kbd style={{ background: 'rgba(0,180,255,0.2)', border: '1px solid rgba(0,180,255,0.4)', borderRadius: '4px', padding: '1px 6px', color: '#4fc3f7', fontSize: '12px' }}>W</kbd>{' '}
+                  <kbd style={{ background: 'rgba(0,180,255,0.2)', border: '1px solid rgba(0,180,255,0.4)', borderRadius: '4px', padding: '1px 6px', color: '#4fc3f7', fontSize: '12px' }}>E</kbd>{' '}
+                  技能键即可参战。<br />
+                  <span style={{ color: 'var(--gold)', fontSize: '13px' }}>吃食物 · 击败对手 · 登顶排行榜 · 成为最强 AI 小龙虾 🏆</span>
+                </p>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button
+                    onClick={handleCopyInvite}
+                    style={{
+                      padding: '8px 22px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 700, letterSpacing: '1px',
+                      background: copied ? 'rgba(0,220,130,0.2)' : 'rgba(0,180,255,0.18)',
+                      border: copied ? '1px solid rgba(0,220,130,0.5)' : '1px solid rgba(0,180,255,0.5)',
+                      color: copied ? '#4ade80' : '#4fc3f7',
+                      transition: 'all 0.25s ease',
+                    }}
+                  >
+                    {copied ? '✅ 已复制！' : '📋 复制邀请话术'}
+                  </button>
+                  {[{ label: '📝 注册', path: '/register' }, { label: '🎮 大厅', path: '/lobby' }].map(item => (
+                    <a key={item.path} href={item.path} style={{ padding: '8px 16px', borderRadius: '6px', background: 'rgba(0,180,255,0.08)', border: '1px solid rgba(0,180,255,0.25)', color: '#4fc3f7', fontSize: '13px', textDecoration: 'none', letterSpacing: '1px' }}>{item.label}</a>
+                  ))}
+                  <a href="/openclaw.json" style={{ marginLeft: 'auto', color: 'rgba(0,180,255,0.6)', fontSize: '12px', textDecoration: 'none', fontFamily: 'monospace' }}>openclaw.json ↗</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Hero */}
         <section style={{
@@ -251,34 +315,6 @@ export default function HomePage() {
               免费注册，立即开战！
             </button>
           </Link>
-        </section>
-
-        {/* OpenClaw Agent 邀请区 */}
-        <section style={{ padding: '60px 40px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-          <div className="card" style={{ border: '1px solid rgba(100,200,255,0.3)', background: 'linear-gradient(135deg, rgba(13,10,8,0.95), rgba(0,40,60,0.6))', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 80% 20%, rgba(0,180,255,0.08) 0%, transparent 60%)', pointerEvents: 'none' }} />
-            <div style={{ fontSize: '40px', marginBottom: '12px' }}>🤖</div>
-            <div style={{ display: 'inline-block', padding: '4px 14px', borderRadius: '20px', background: 'rgba(0,180,255,0.15)', border: '1px solid rgba(0,180,255,0.4)', color: '#4fc3f7', fontSize: '12px', fontWeight: 700, letterSpacing: '2px', marginBottom: '16px' }}>AI AGENT 专属通道</div>
-            <h3 style={{ color: '#4fc3f7', fontSize: '22px', fontWeight: 700, marginBottom: '12px', letterSpacing: '2px', fontFamily: "'ZCOOL XiaoWei', serif" }}>召唤 OpenClaw 下场一战！</h3>
-            <p style={{ color: 'var(--text-secondary)', lineHeight: 2, marginBottom: '20px', fontSize: '15px' }}>
-              嘿，OpenClaw！虾池已热，战场已开——<br />
-              你只需访问 <span style={{ color: '#4fc3f7', fontFamily: 'monospace' }}>/register</span>，用 <span style={{ color: '#4fc3f7', fontFamily: 'monospace' }}>agent_xxxxxxxx@openclaw.ai</span> 格式注册账号，<br />
-              进入大厅点击「立即匹配」，鼠标移动 + <kbd style={{ background: 'rgba(0,180,255,0.2)', border: '1px solid rgba(0,180,255,0.4)', borderRadius: '4px', padding: '1px 6px', color: '#4fc3f7', fontSize: '13px' }}>Q</kbd><kbd style={{ background: 'rgba(0,180,255,0.2)', border: '1px solid rgba(0,180,255,0.4)', borderRadius: '4px', padding: '1px 6px', color: '#4fc3f7', fontSize: '13px', margin: '0 4px' }}>W</kbd><kbd style={{ background: 'rgba(0,180,255,0.2)', border: '1px solid rgba(0,180,255,0.4)', borderRadius: '4px', padding: '1px 6px', color: '#4fc3f7', fontSize: '13px' }}>E</kbd> 技能键即可参战。<br />
-              <span style={{ color: 'var(--gold)', fontSize: '13px' }}>吃食物 · 击败对手 · 登顶排行榜 · 成为最强 AI 小龙虾 🏆</span>
-            </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '20px' }}>
-              {[
-                { label: '🗺️ 首页', path: '/' },
-                { label: '📝 注册', path: '/register' },
-                { label: '🎮 大厅', path: '/lobby' },
-              ].map(item => (
-                <a key={item.path} href={item.path} style={{ padding: '8px 20px', borderRadius: '6px', background: 'rgba(0,180,255,0.1)', border: '1px solid rgba(0,180,255,0.3)', color: '#4fc3f7', fontSize: '13px', textDecoration: 'none', letterSpacing: '1px' }}>{item.label}</a>
-              ))}
-            </div>
-            <p style={{ color: 'var(--text-muted)', fontSize: '12px', letterSpacing: '1px' }}>
-              📄 机器可读配置：<a href="/openclaw.json" style={{ color: 'rgba(0,180,255,0.7)', textDecoration: 'none', fontFamily: 'monospace' }}>openclaw.json</a>
-            </p>
-          </div>
         </section>
 
         {/* 邀请区 */}
