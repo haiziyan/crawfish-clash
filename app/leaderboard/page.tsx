@@ -32,31 +32,31 @@ export default function LeaderboardPage() {
 
       <nav style={{
         position: 'sticky', top: 0, zIndex: 100,
-        padding: '0 32px', height: '64px',
+        padding: '0 16px', height: '56px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         background: 'rgba(13,10,8,0.9)', backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--dark-border)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href="/"><span style={{ fontSize: '24px' }} className="claw-shake">🦞</span></Link>
-          <span style={{ fontFamily: "'ZCOOL XiaoWei', serif", fontSize: '20px', letterSpacing: '3px' }} className="gold-text">排行榜</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Link href="/"><span style={{ fontSize: '22px' }} className="claw-shake">🦞</span></Link>
+          <span style={{ fontFamily: "'ZCOOL XiaoWei', serif", fontSize: '18px', letterSpacing: '2px' }} className="gold-text">排行榜</span>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Link href="/lobby"><button className="btn-secondary" style={{ padding: '6px 16px', fontSize: '13px' }}>游戏大厅</button></Link>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Link href="/lobby"><button className="btn-secondary" style={{ padding: '6px 14px', fontSize: '13px' }}>游戏大厅</button></Link>
         </div>
       </nav>
 
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 24px', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: 'clamp(20px, 5vw, 40px) clamp(12px, 3vw, 24px)', position: 'relative', zIndex: 10 }}>
         {/* 前三名 */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '16px', marginBottom: '48px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 'clamp(8px, 3vw, 16px)', marginBottom: 'clamp(24px, 5vw, 48px)' }}>
           {[sorted[1], sorted[0], sorted[2]].map((p, idx) => {
             const isFirst = idx === 1;
-            const heights = ['140px', '180px', '120px'];
+            const heights = ['clamp(100px,20vw,140px)', 'clamp(130px,25vw,180px)', 'clamp(85px,17vw,120px)'];
             const medals = ['🥈', '🥇', '🥉'];
             const colors = ['var(--text-secondary)', 'var(--gold-light)', '#CD7F32'];
             return (
               <div key={p.rank} style={{
-                flex: isFirst ? '0 0 200px' : '0 0 160px',
+                flex: isFirst ? '0 0 clamp(130px,30vw,200px)' : '0 0 clamp(100px,24vw,160px)',
                 textAlign: 'center',
               }}>
                 <div style={{
@@ -66,19 +66,19 @@ export default function LeaderboardPage() {
                   height: heights[idx],
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
-                  padding: '16px',
+                  padding: 'clamp(8px,2vw,16px)',
                   boxShadow: isFirst ? '0 0 30px rgba(241,196,15,0.2)' : 'none',
                 }}>
-                  <div style={{ fontSize: isFirst ? '48px' : '36px', marginBottom: '8px' }}>🦞</div>
-                  <div style={{ color: colors[idx], fontWeight: 700, fontSize: isFirst ? '16px' : '14px' }}>{p.name}</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '4px' }}>{p.title}</div>
-                  <div style={{ color: colors[idx], fontWeight: 700, fontSize: isFirst ? '20px' : '16px', marginTop: '8px' }}>{(tab === 'score' ? p.score : p.wins).toLocaleString()}</div>
+                  <div style={{ fontSize: isFirst ? 'clamp(28px,7vw,48px)' : 'clamp(22px,5vw,36px)', marginBottom: '6px' }}>🦞</div>
+                  <div style={{ color: colors[idx], fontWeight: 700, fontSize: isFirst ? 'clamp(12px,3vw,16px)' : 'clamp(11px,2.5vw,14px)' }}>{p.name}</div>
+                  <div style={{ color: 'var(--text-muted)', fontSize: 'clamp(10px,2vw,12px)', marginTop: '3px' }}>{p.title}</div>
+                  <div style={{ color: colors[idx], fontWeight: 700, fontSize: isFirst ? 'clamp(14px,4vw,20px)' : 'clamp(12px,3vw,16px)', marginTop: '6px' }}>{(tab === 'score' ? p.score : p.wins).toLocaleString()}</div>
                 </div>
                 <div style={{
                   background: isFirst ? 'var(--gold)' : colors[idx],
-                  height: '40px', borderRadius: '0 0 8px 8px',
+                  height: '36px', borderRadius: '0 0 8px 8px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '20px',
+                  fontSize: '18px',
                 }}>{medals[idx]}</div>
               </div>
             );
@@ -104,20 +104,20 @@ export default function LeaderboardPage() {
             <div key={p.rank} style={{
               background: p.rank <= 3 ? 'rgba(241,196,15,0.04)' : 'var(--dark-card)',
               border: `1px solid ${p.rank <= 3 ? 'rgba(241,196,15,0.2)' : 'var(--dark-border)'}`,
-              borderRadius: '8px', padding: '16px 24px', marginBottom: '8px',
-              display: 'flex', alignItems: 'center', gap: '16px',
+              borderRadius: '8px', padding: 'clamp(10px,3vw,16px) clamp(12px,3vw,24px)', marginBottom: '8px',
+              display: 'flex', alignItems: 'center', gap: 'clamp(10px,2vw,16px)',
             }}>
-              <span style={{ width: '32px', textAlign: 'center', fontSize: p.rank <= 3 ? '22px' : '16px', fontWeight: 700, color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+              <span style={{ width: '28px', textAlign: 'center', fontSize: p.rank <= 3 ? '20px' : '14px', fontWeight: 700, color: 'var(--text-muted)', fontFamily: 'monospace', flexShrink: 0 }}>
                 {p.rank <= 3 ? ['🥇','🥈','🥉'][p.rank-1] : `#${p.rank}`}
               </span>
-              <span style={{ fontSize: '28px' }}>🦞</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, color: p.rank === 1 ? 'var(--gold-light)' : 'var(--text-primary)' }}>{p.name}</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{p.title} · {p.games} 场</div>
+              <span style={{ fontSize: 'clamp(20px,5vw,28px)', flexShrink: 0 }}>🦞</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, color: p.rank === 1 ? 'var(--gold-light)' : 'var(--text-primary)', fontSize: 'clamp(13px,3vw,15px)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{p.title} · {p.games} 场</div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--gold)' }}>{(tab === 'score' ? p.score : p.wins).toLocaleString()}</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{tab === 'score' ? '积分' : '胜利'}</div>
+              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: 'clamp(14px,4vw,18px)', color: 'var(--gold)' }}>{(tab === 'score' ? p.score : p.wins).toLocaleString()}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{tab === 'score' ? '积分' : '胜利'}</div>
               </div>
             </div>
           ))}

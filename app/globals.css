@@ -221,6 +221,13 @@ body {
   margin: 24px 0;
 }
 
+/* 大厅页响应式网格 */
+@media (min-width: 768px) {
+  .lobby-grid {
+    grid-template-columns: 1fr 300px !important;
+  }
+}
+
 /* 桌面端：技能栏横排居中底部 */
 @media (min-width: 769px) {
   .skills-bar {
@@ -249,6 +256,41 @@ body {
     left: auto !important;
     transform: none !important;
     right: 108px !important;
+  }
+
+  /* 导航栏移动端 */
+  .nav-links {
+    display: none !important;
+  }
+
+  /* 按钮移动端更大触摸区域 */
+  .btn-primary, .btn-secondary {
+    min-height: 44px;
+    padding: 10px 20px !important;
+  }
+
+  /* 卡片移动端内边距缩小 */
+  .card {
+    padding: 16px !important;
+  }
+
+  /* 输入框移动端字体防缩放 */
+  .input-field {
+    font-size: 16px !important;
+  }
+
+  /* 段位卡片移动端 */
+  .rank-card {
+    min-width: 80px !important;
+    padding: 10px 10px !important;
+  }
+}
+
+/* 超小屏 */
+@media (max-width: 360px) {
+  .btn-primary, .btn-secondary {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
   }
 }
 

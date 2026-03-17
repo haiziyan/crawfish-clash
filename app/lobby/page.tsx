@@ -59,7 +59,7 @@ export default function LobbyPage() {
 
       <nav style={{
         position: 'sticky', top: 0, zIndex: 100,
-        padding: '0 32px', height: '64px',
+        padding: '0 16px', height: '56px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         background: 'rgba(13,10,8,0.9)', backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--dark-border)',
@@ -83,18 +83,18 @@ export default function LobbyPage() {
         </div>
       </nav>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: 'clamp(16px, 4vw, 32px) clamp(12px, 3vw, 24px)', position: 'relative', zIndex: 10 }}>
         {/* 快速匹配 */}
         <div style={{
           background: 'linear-gradient(135deg, rgba(139,26,26,0.3), rgba(26,17,8,0.8))',
           border: '1px solid rgba(192,57,43,0.4)',
-          borderRadius: '12px', padding: '32px',
+          borderRadius: '12px', padding: 'clamp(18px, 4vw, 32px)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          flexWrap: 'wrap', gap: '20px', marginBottom: '32px',
+          flexWrap: 'wrap', gap: '16px', marginBottom: 'clamp(16px, 4vw, 32px)',
         }}>
           <div>
-            <h2 style={{ fontFamily: "'ZCOOL XiaoWei', serif", fontSize: '28px', letterSpacing: '3px', marginBottom: '8px' }}>快速匹配</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>系统自动为你匹配同段位对手，一键开战！</p>
+            <h2 style={{ fontFamily: "'ZCOOL XiaoWei', serif", fontSize: 'clamp(20px, 5vw, 28px)', letterSpacing: '2px', marginBottom: '6px' }}>快速匹配</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(12px, 3vw, 14px)' }}>系统自动为你匹配同段位对手，一键开战！</p>
           </div>
           <div style={{ textAlign: 'center' }}>
             {matchmaking ? (
@@ -110,7 +110,7 @@ export default function LobbyPage() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: '20px', alignItems: 'start' }} className="lobby-grid">
           {/* 左侧：房间列表 */}
           <div>
             <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
@@ -199,7 +199,7 @@ export default function LobbyPage() {
           </div>
 
           {/* 右侧：个人信息 + 邀请 */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {user ? (
               <div className="card">
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>

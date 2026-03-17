@@ -64,7 +64,7 @@ export default function RegisterPage() {
 
   return (
     <div style={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
+      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
       background: 'radial-gradient(ellipse at center, rgba(139,26,26,0.1) 0%, transparent 70%)',
     }}>
       {/* 背景网格 */}
@@ -76,16 +76,16 @@ export default function RegisterPage() {
 
       <div style={{ width: '100%', maxWidth: '440px', position: 'relative', zIndex: 10 }}>
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <Link href="/">
-            <span style={{ fontSize: '40px', display: 'inline-block' }} className="claw-shake">🦞</span>
+            <span style={{ fontSize: '36px', display: 'inline-block' }} className="claw-shake">🦞</span>
           </Link>
-          <h1 style={{ fontFamily: "'ZCOOL XiaoWei', serif", fontSize: '24px', letterSpacing: '4px', marginTop: '8px' }} className="gold-text">小龙虾大战</h1>
+          <h1 style={{ fontFamily: "'ZCOOL XiaoWei', serif", fontSize: '22px', letterSpacing: '4px', marginTop: '6px' }} className="gold-text">小龙虾大战</h1>
         </div>
 
         <div style={{
           background: 'var(--dark-card)', border: '1px solid var(--dark-border)',
-          borderRadius: '12px', padding: '40px', position: 'relative', overflow: 'hidden',
+          borderRadius: '12px', padding: 'clamp(20px, 5vw, 40px)', position: 'relative', overflow: 'hidden',
         }}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, var(--red-main), var(--gold))' }} />
           <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '8px', letterSpacing: '2px' }}>创建账号</h2>
