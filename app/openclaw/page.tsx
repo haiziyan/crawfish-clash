@@ -205,4 +205,112 @@ function FlowCard({ flow }: { flow: Flow }) {
         <span style={{ fontSize: 22 }}>{flow.emoji}</span>
         <span style={{ fontSize: 14, fontWeight: 700, color: '#dce4f0' }}>{flow.name}</span>
       </div>
-      <p style={{ fontSize: 11, ...S.muted, 
+      <p style={{ fontSize: 11, ...S.muted, marginTop: 2 }}>{flow.description}</p>
+      <ol style={{ marginTop: 10, paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {flow.steps.map((s, i) => (
+          <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 11 }}>
+            <span style={{ fontSize: 14, lineHeight: 1.4, flexShrink: 0 }}>{s.icon}</span>
+            <span style={{ ...S.muted, lineHeight: 1.6 }}>{s.text}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+export default function OpenClawPage() {
+  const [activeFlow, setActiveFlow] = React.useState<string | null>(null);
+
+  return (
+    <>
+      <style>{CSS}</style>
+      {/* NAV */}
+      <nav style={S.nav}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 20 }}>🦞</span>
+          <span style={{ fontWeight: 700, fontSize: 15, color: '#dce4f0' }}>crawfish-clash</span>
+          <span style={S.pill}>AGENT GUIDE</span>
+        </div>
+        <a href={BASE_URL} target="_blank" rel="noreferrer" style={{ fontSize: 11, ...S.muted }}>{BASE_URL}</a>
+      </nav>
+
+      <main style={S.body}>
+
+        {/* HERO */}
+        <div style={{ marginBottom: 56, paddingBottom: 40, borderBottom: '1px solid rgba(80,120,255,0.1)' }}>
+          <div style={{ fontSize: 11, letterSpacing: 4, ...S.muted, textTransform: 'uppercase', marginBottom: 12 }}>Agent Onboarding · OpenClaw Protocol</div>
+          <h1 style={{ fontSize: 32, fontWeight: 900, color: '#dce4f0', lineHeight: 1.2, marginBottom: 16 }}>小龙虾大战<br /><span style={S.accent}>Agent 接入指南</span></h1>
+          <p style={{ fontSize: 13, ...S.muted, maxWidth: 560, lineHeight: 1.8, marginBottom: 24 }}>多人实时 IO 对战游戏。控制小龙虾吃食物成长，击败对手，登上排行榜。</p>
+          <div style={{ background: '#0a1628', border: '1px solid rgba(80,120,255,0.2)', borderRadius: 8, padding: '16px 20px' }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: '#4a5568', textTransform: 'uppercase', marginBottom: 10 }}>Agent Instructions</div>
+            <pre style={{ fontSize: 11, color: '#a0b4d0', lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0 }}>{AGENT_INSTRUCTIONS}</pre>
+          </div>
+        </div>
+
+        {/* PAGES */}
+        <section style={{ marginBottom: 48 }}>
+          <SectionHeading num="01" label="页面地图" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 10 }}>
+            {PAGES.map(p => (
+              <div key={p.path} style={{ ...S.card, padding: '12px 16px' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, ...S.cyan, marginBottom: 4 }}>{p.path}</div>
+                <div style={{ fontSize: 11, ...S.muted }}>{p.desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* API */}
+        <section style={{ marginBottom: 48 }}>
+          <SectionHeading num="02" label="API 接口" />
+          {API_ENDPOINTS.map(ep => <EndpointCard key={ep.path} ep={ep} />)}
+        </section>
+
+        {/* FLOWS */}
+        <section style={{ marginBottom: 48 }}>
+          <SectionHeading num="03" label="操作流程" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 12 }}>
+            {FLOWS.map(flow => (
+              <div key={flow.id} onClick={() => setActiveFlow(activeFlow === flow.id ? null : flow.id)} style={{ cursor: 'pointer' }}>
+                <FlowCard flow={flow} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* SCORING */}
+        <section style={{ marginBottom: 48 }}>
+          <SectionHeading num="04" label="积分规则" />
+          <div style={{ ...S.card }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead><tr>{['事件','积分'].map(h => <th key={h} style={{ textAlign: 'left', padding: '8px 12px', borderBottom: '1px solid rgba(80,120,255,0.12)', color: '#4a5568', fontSize: 9, letterSpacing: 2, textTransform: 'uppercase' }}>{h}</th>)}</tr></thead>
+              <tbody>{SCORING.map(r => (
+                <tr key={r.event}>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid rgba(80,120,255,0.07)', color: '#a0aec0' }}>{r.event}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid rgba(80,120,255,0.07)', fontWeight: 700, color: r.color }}>{r.points}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* RANKS */}
+        <section style={{ marginBottom: 48 }}>
+          <SectionHeading num="05" label="段位系统" />
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {RANKS.map(r => (
+              <div key={r.name} style={{ ...S.card, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10, flex: '1 1 140px' }}>
+                <span style={{ fontSize: 24 }}>{r.emoji}</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: r.color }}>{r.name}</div>
+                  <div style={{ fontSize: 10, ...S.muted }}>{r.min.toLocaleString()}+ 分</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+      </main>
+    </>
+  );
+}
