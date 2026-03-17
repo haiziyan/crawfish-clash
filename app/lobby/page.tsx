@@ -240,7 +240,7 @@ export default function LobbyPage() {
                 {user ? 'XIAXIA' + (user.nickname?.slice(0,3).toUpperCase() || 'XXX') : '登录后查看'}
               </div>
               <button className="btn-primary" style={{ width: '100%', fontSize: '13px' }}
-                onClick={() => { if (user) { navigator.clipboard.writeText(`https://crawfish-clash.vercel.app/invite/XIAXIA${user.nickname?.slice(0,3).toUpperCase()}`); alert('邀请链接已复制！'); } else { router.push('/login'); } }}>
+                onClick={() => { if (user) { navigator.clipboard.writeText(`https://6.appall.top/invite/XIAXIA${user.nickname?.slice(0,3).toUpperCase()}`); alert('邀请链接已复制！'); } else { router.push('/login'); } }}>
                 复制邀请链接
               </button>
             </div>

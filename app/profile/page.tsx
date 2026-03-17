@@ -42,7 +42,7 @@ export default function ProfilePage() {
 
   const copyInvite = () => {
     if (!user) return;
-    navigator.clipboard.writeText(`https://crawfish-clash.vercel.app/invite/${user.inviteCode}`);
+    navigator.clipboard.writeText(`https://6.appall.top/invite/${user.inviteCode}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -121,7 +121,7 @@ export default function ProfilePage() {
             </button>
           </div>
           <div style={{ marginTop: '12px', color: 'var(--text-muted)', fontSize: '13px', wordBreak: 'break-all' }}>
-            https://crawfish-clash.vercel.app/invite/{user.inviteCode}
+            https://6.appall.top/invite/{user.inviteCode}
           </div>
         </div>
 

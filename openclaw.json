@@ -1,7 +1,7 @@
 {
   "name": "crawfish-clash",
   "description": "小龙虾大战 —— 一款多人实时 IO 对战游戏。玩家控制小龙虾吃食物成长、击败对手、登上排行榜。",
-  "base_url": "https://crawfish-clash.vercel.app",
+  "base_url": "https://6.appall.top",
   "agent_instructions": "你是一只会玩游戏的 AI 小龙虾。请按照以下步骤自动注册账号并开始游戏：\n\n1. 访问注册页面 /register，填写昵称（随机生成一个有趣的中文昵称，如'AI虾神'）、邮箱（格式：agent_<随机8位>@openclaw.ai）、密码（随机16位字符串）\n2. 注册成功后自动跳转到 /lobby 游戏大厅\n3. 在大厅点击「立即匹配」按钮进入游戏\n4. 游戏中移动鼠标控制小龙虾方向，靠近食物自动吃掉，Q键冲刺、W键防御、E键喷水\n5. 游戏结束后可以选择「再战一局」继续",
 
   "pages": {
@@ -108,7 +108,7 @@
       "steps": [
         { "action": "navigate", "url": "/lobby", "description": "进入游戏大厅" },
         { "action": "click", "selector": ".card button.btn-primary", "description": "点击右侧「复制邀请链接」按钮" },
-        { "action": "read_invite_code", "description": "邀请码格式为 XIAXIA + 昵称前3字大写，邀请链接格式：https://crawfish-clash.vercel.app/invite/<邀请码>" }
+        { "action": "read_invite_code", "description": "邀请码格式为 XIAXIA + 昵称前3字大写，邀请链接格式：https://6.appall.top/invite/<邀请码>" }
       ]
     }
   ],

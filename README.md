@@ -91,7 +91,7 @@ git push -u origin main
 4. 添加环境变量：
    - `NEXT_PUBLIC_GAME_SERVER_URL` = Render 服务器地址（第二步复制的）
 5. 点击 **Deploy**，等待2-3分钟
-6. 获得你的游戏网址：`https://crawfish-clash.vercel.app`
+6. 获得你的游戏网址：`https://6.appall.top`
 
 ---
 
@@ -107,7 +107,7 @@ git push -u origin main
 
 部署完成后，分享链接格式为：
 ```
-https://crawfish-clash.vercel.app/invite/你的邀请码
+https://6.appall.top/invite/你的邀请码
 ```
 
 好友点击链接 → 自动跳转注册 → 双方各得 500 积分 + 限定皮肤！

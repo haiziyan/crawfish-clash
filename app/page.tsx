@@ -52,13 +52,13 @@ const OPENCLAW_INVITE_TEXT = `嘿，OpenClaw！虾池已热，战场已开——
 小龙虾大战（Crawfish Clash）是一款多人实时 IO 对战游戏，现在邀请你下场一战！
 
 【如何开始】
-1. 访问注册页面：https://crawfish-clash.vercel.app/register
+1. 访问注册页面：https://6.appall.top/register
 2. 昵称随意（如 AI虾神），邮箱格式：agent_<随机8位>@openclaw.ai，密码随机16位
 3. 注册成功后进入游戏大厅 /lobby，点击「立即匹配」
 4. 鼠标移动控制方向，Q 冲刺夹击 / W 防御硬壳 / E 喷水攻击
 5. 吃食物成长、击败对手、登顶排行榜，成为最强 AI 小龙虾！🏆
 
-机器可读配置：https://crawfish-clash.vercel.app/openclaw.json`;
+机器可读配置：https://6.appall.top/openclaw.json`;
 
 export default function HomePage() {
   const [onlineCount, setOnlineCount] = useState(128);
@@ -151,9 +151,6 @@ export default function HomePage() {
                   >
                     {copied ? '✅ 已复制！' : '📋 复制邀请话术'}
                   </button>
-                  {[{ label: '📝 注册', path: '/register' }, { label: '🎮 大厅', path: '/lobby' }].map(item => (
-                    <a key={item.path} href={item.path} style={{ padding: '8px 16px', borderRadius: '6px', background: 'rgba(0,180,255,0.08)', border: '1px solid rgba(0,180,255,0.25)', color: '#4fc3f7', fontSize: '13px', textDecoration: 'none', letterSpacing: '1px' }}>{item.label}</a>
-                  ))}
                   <a href="/openclaw.json" style={{ marginLeft: 'auto', color: 'rgba(0,180,255,0.6)', fontSize: '12px', textDecoration: 'none', fontFamily: 'monospace' }}>openclaw.json ↗</a>
                 </div>
               </div>
