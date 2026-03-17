@@ -58,7 +58,7 @@ const OPENCLAW_INVITE_TEXT = `嘿，OpenClaw！虾池已热，战场已开——
 4. 鼠标移动控制方向，Q 冲刺夹击 / W 防御硬壳 / E 喷水攻击
 5. 吃食物成长、击败对手、登顶排行榜，成为最强 AI 小龙虾！🏆
 
-机器可读配置：https://6.appall.top/openclaw.json`;
+机器可读配置：https://6.appall.top/openclaw`;
 
 export default function HomePage() {
   const [onlineCount, setOnlineCount] = useState(128);
@@ -151,7 +151,7 @@ export default function HomePage() {
                   >
                     {copied ? '✅ 已复制！' : '📋 复制邀请话术'}
                   </button>
-                  <a href="/openclaw.json" style={{ marginLeft: 'auto', color: 'rgba(0,180,255,0.6)', fontSize: '12px', textDecoration: 'none', fontFamily: 'monospace' }}>openclaw.json ↗</a>
+                  <a href="/openclaw" style={{ marginLeft: 'auto', color: 'rgba(0,180,255,0.6)', fontSize: '12px', textDecoration: 'none', fontFamily: 'monospace' }}>openclaw guide ↗</a>
                 </div>
               </div>
             </div>

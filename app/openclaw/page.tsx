@@ -1,7 +1,7 @@
 'use client';
 
 // ── 数据 ─────────────────────────────────────────────────────────────
-const BASE_URL = 'https://crawfish-clash.vercel.app';
+const BASE_URL = 'https://6.appall.top';
 
 const PAGES = [
   { path: '/', desc: '游戏首页，展示游戏介绍和进入入口' },
